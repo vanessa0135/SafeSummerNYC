@@ -258,13 +258,11 @@ function clearFeatureMarkers() {
 // }
 
 //using hardcoded data for now until csv/json files are added and working
-async function loadAndDisplayPlaces(type) {
+function loadAndDisplayPlaces(type) {
     resultsTitle.textContent = getTitle(type);
 
     try {
         const places = HARDCODED_DATA[type] || [];
-
-        console.log("Using hardcoded data:", places);
 
         const nearbyPlaces = getNearbyPlaces(
             places,
@@ -274,13 +272,13 @@ async function loadAndDisplayPlaces(type) {
 
         renderPlaces(nearbyPlaces, type);
 
+        hideLoading(); // optional (or remove entirely)
+
     } catch (error) {
-        console.error("Error loading data:", error);
-        nearestCard.innerHTML = `<p>Could not load data.</p>`;
-        resultsList.innerHTML = "";
-        hideLoading();
+        console.error("Error:", error);
     }
 }
+
 
 //Calculate distance of locations and filter/sort based on distance and radius
 function getNearbyPlaces(places, userLocation, radiusMiles) {
@@ -325,52 +323,122 @@ function milesToMeters(miles) {
   return miles * 1609.34;
 }
 
-function renderPlaces(places, type) {
-    clearFeatureMarkers();
 
+function renderPlaces(places, type) {
+    // Clear previous list
+    resultsList.innerHTML = "";
+
+    // Clear previous markers (if you are storing them)
+    if (window.currentMarkers) {
+        window.currentMarkers.forEach(marker => map.removeLayer(marker));
+    }
+    window.currentMarkers = [];
+
+    // If no places
     if (places.length === 0) {
-        nearestCard.innerHTML = `
-        <h3>No results found</h3>
-        <p>No ${type} locations were found within ${SEARCH_RADIUS_MILES} miles.</p>
-        `;
-        resultsList.innerHTML = "";
+        nearestCard.innerHTML = "<p>No nearby locations found.</p>";
         return;
     }
 
+    // -----------------------------
+    // Show nearest location
+    // -----------------------------
     const nearest = places[0];
 
     nearestCard.innerHTML = `
         <h3>${nearest.name}</h3>
-        <p>${nearest.address}</p>
-        <p><strong>Borough:</strong> ${nearest.borough}</p>
-        <p><strong>Distance:</strong> ${nearest.distance.toFixed(2)} miles away</p>
+        <p>${nearest.address || ""}</p>
+        <p>${nearest.distance ? nearest.distance.toFixed(2) + " miles away" : ""}</p>
     `;
 
-    resultsList.innerHTML = places.map(place => `
-        <div class="result-item">
-        <h4>${place.name}</h4>
-        <p>${place.address}</p>
-        <p>${place.borough}</p>
-        <p><strong>${place.distance.toFixed(2)} miles away</strong></p>
-        </div>
-    `).join("");
+    // -----------------------------
+    // Add markers + list
+    // -----------------------------
+    const bounds = [];
 
     places.forEach(place => {
+        // Add marker to map
         const marker = L.marker([place.lat, place.lng])
-        .addTo(map)
-        .bindPopup(`
-            <strong>${place.name}</strong><br>
-            ${place.address}<br>
-            ${place.distance.toFixed(2)} miles away
-        `);
+            .addTo(map)
+            .bindPopup(`
+                <b>${place.name}</b><br>
+                ${place.address || ""}
+            `);
 
-        featureMarkers.push(marker);
+        // Save marker so we can clear later
+        window.currentMarkers.push(marker);
+
+        // Add to bounds for zoom
+        bounds.push([place.lat, place.lng]);
+
+        // Add to list
+        const div = document.createElement("div");
+        div.className = "place-item";
+
+        div.innerHTML = `
+            <h4>${place.name}</h4>
+            <p>${place.address || ""}</p>
+            <p>${place.distance ? place.distance.toFixed(2) + " miles" : ""}</p>
+        `;
+
+        resultsList.appendChild(div);
     });
 
-    const bounds = L.latLngBounds([
-        [USER_LOCATION.lat, USER_LOCATION.lng],
-        ...places.map(place => [place.lat, place.lng])
-    ]);
-
-    map.fitBounds(bounds, { padding: [50, 50] });
+    // -----------------------------
+    // Adjust map view
+    // -----------------------------
+    if (bounds.length > 0) {
+        map.fitBounds(bounds, { padding: [50, 50] });
+    }
 }
+// function renderPlaces(places, type) {
+//     clearFeatureMarkers();
+
+//     if (places.length === 0) {
+//         nearestCard.innerHTML = `
+//         <h3>No results found</h3>
+//         <p>No ${type} locations were found within ${SEARCH_RADIUS_MILES} miles.</p>
+//         `;
+//         resultsList.innerHTML = "";
+//         return;
+//     }
+
+//     const nearest = places[0];
+
+//     nearestCard.innerHTML = `
+//         <h3>${nearest.name}</h3>
+//         <p>${nearest.address}</p>
+//         <p><strong>Borough:</strong> ${nearest.borough}</p>
+//         <p><strong>Distance:</strong> ${nearest.distance.toFixed(2)} miles away</p>
+//     `;
+
+//     resultsList.innerHTML = places.map(place => `
+//         <div class="result-item">
+//         <h4>${place.name}</h4>
+//         <p>${place.address}</p>
+//         <p>${place.borough}</p>
+//         <p><strong>${place.distance.toFixed(2)} miles away</strong></p>
+//         </div>
+//     `).join("");
+
+//     places.forEach(place => {
+//         const marker = L.marker([place.lat, place.lng])
+//         .addTo(map)
+//         .bindPopup(`
+//             <strong>${place.name}</strong><br>
+//             ${place.address}<br>
+//             ${place.distance.toFixed(2)} miles away
+//         `);
+
+//         featureMarkers.push(marker);
+//     });
+
+//     const bounds = L.latLngBounds([
+//         [USER_LOCATION.lat, USER_LOCATION.lng],
+//         ...places.map(place => [place.lat, place.lng])
+//     ]);
+
+//     map.fitBounds(bounds, { padding: [50, 50] });
+// }
+
+loadAndDisplayPlaces("cooling");
