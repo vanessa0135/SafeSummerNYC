@@ -64,13 +64,10 @@ function updateTempBoxColor(temp) {
     tempBox.classList.remove("temp-hot", "temp-warm", "temp-mild", "temp-cool");
     //update temp box color
 
-    if (temp >= 100) {
-        tempBox.style.backgroundColor = "red";
-      //change color to red temp-box
-    } 
-    else if (temp < 90 && temp >= HOT_THRESHOLD) 
+    
+    if (temp >= HOT_THRESHOLD) 
     {
-        tempBox.style.backgroundColor = "orange";
+        tempBox.style.backgroundColor = "red";
       //change color to orange
     }
     else if (temp < HOT_THRESHOLD && temp >= 70) {
