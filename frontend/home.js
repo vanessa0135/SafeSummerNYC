@@ -10,7 +10,7 @@ const USER_LOCATION = { //Hard coding user's location
 const SEARCH_RADIUS_MILES = 2;
 
 const DATA_FILES = { //hard coding the json files - add them to the frontend folder
-    cooling: "Energy_and_WAter_Services_Cooling_Centers.json",
+    cooling: "Energy_and_Water_Services_Cooling_Centers.json",
     water: "data/water-fountains.json",
     bathroom: "data/bathrooms.json",
     charging: "data/charging-stations.json"
@@ -18,7 +18,7 @@ const DATA_FILES = { //hard coding the json files - add them to the frontend fol
 
 //test data for nearby places - can be removed when json files are added
 // temporary test data
-  const testData = {
+  const HARDCODED_DATA = {
     cooling: [
       {
         name: "Test Cooling Center",
@@ -64,7 +64,34 @@ const DATA_FILES = { //hard coding the json files - add them to the frontend fol
     ]
   };
 
+  //used to convert CSV data to JSON format - needs working
+// function loadPlacesFromCSV(filePath) {
+//     return new Promise((resolve, reject) => {
+//         Papa.parse(filePath, {
+//         download: true,
+//         header: true,
+//         skipEmptyLines: true,
+//         complete: function (results) {
+//             console.log("CSV loaded:", results.data);
 
+//             const places = results.data
+//             .map(row => ({
+//                 name: row.name || row.Name || row.site_name || "Unknown",
+//                 address: row.address || row.Address || "No address",
+//                 borough: row.borough || row.Borough || "Unknown",
+//                 lat: parseFloat(row.lat || row.latitude || row.Latitude),
+//                 lng: parseFloat(row.lng || row.longitude || row.Longitude)
+//             }))
+//             .filter(place => !isNaN(place.lat) && !isNaN(place.lng));
+
+//             resolve(places);
+//         },
+//         error: function (error) {
+//             reject(error);
+//         }
+//         });
+//     });
+// }
 let currentType = "cooling";
 let map;
 let userMarker;
@@ -142,11 +169,11 @@ function attachButtonEvents() {
         });
     });
 }
-Show loading overlay while fetching data
+//Show loading overlay while fetching data
 function showLoading() {
     loadingOverlay.classList.remove("hidden");
 }
-Hide loading overlay after data is loaded
+//Hide loading overlay after data is loaded
 function hideLoading() {
     loadingOverlay.classList.add("hidden");
 }
@@ -185,22 +212,59 @@ function clearFeatureMarkers() {
     featureMarkers = [];
 }
 
+//not working with CSV files - need to fix
+
+// async function loadAndDisplayPlaces(type) {
+//     //showLoading();
+//     resultsTitle.textContent = getTitle(type);
+
+//     try {
+//         // const response = await fetch(DATA_FILES[type]);
+//         // const places = await response.json();
+//         const places = await loadPlacesFromCSV(DATA_FILES[type]);
+
+//         // For testing without actual data, you can use the hardcoded testData instead:
+//         // setTimeout(() => {
+//         //     const nearbyPlaces = getNearbyPlaces(places, USER_LOCATION, SEARCH_RADIUS_MILES);
+//         //     renderPlaces(nearbyPlaces, type);
+//         //     hideLoading();
+//         // }, 1200);
+
+//         let places;
+
+//     // use CSV for cooling (example)
+//         if (type === "cooling") {
+//             places = await loadPlacesFromCSV("data/cooling-centers.csv");
+//             } else {
+//             const response = await fetch(DATA_FILES[type]);
+//             places = await response.json();
+//         }
+
+//         const nearbyPlaces = getNearbyPlaces(
+//             places,
+//             USER_LOCATION,
+//             SEARCH_RADIUS_MILES
+//         );
+
+//         renderPlaces(nearbyPlaces, type);
+//         //hideLoading();
+
+//     } catch (error) {
+//         console.error("Error loading data:", error);
+//         nearestCard.innerHTML = `<p>Could not load data.</p>`;
+//         resultsList.innerHTML = "";
+//         hideLoading();
+//     }
+// }
+
+//using hardcoded data for now until csv/json files are added and working
 async function loadAndDisplayPlaces(type) {
-    showLoading();
     resultsTitle.textContent = getTitle(type);
 
     try {
-        const response = await fetch(DATA_FILES[type]);
-        const places = await response.json();
+        const places = HARDCODED_DATA[type] || [];
 
-        // For testing without actual data, you can use the hardcoded testData instead:
-        // setTimeout(() => {
-        //     const nearbyPlaces = getNearbyPlaces(places, USER_LOCATION, SEARCH_RADIUS_MILES);
-        //     renderPlaces(nearbyPlaces, type);
-        //     hideLoading();
-        // }, 1200);
-
-        
+        console.log("Using hardcoded data:", places);
 
         const nearbyPlaces = getNearbyPlaces(
             places,
@@ -209,7 +273,6 @@ async function loadAndDisplayPlaces(type) {
         );
 
         renderPlaces(nearbyPlaces, type);
-        hideLoading();
 
     } catch (error) {
         console.error("Error loading data:", error);
