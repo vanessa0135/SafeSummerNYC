@@ -1,60 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cooling Center Locator</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cooling Center Locator</title>
 
-  <link rel="stylesheet" href="home.css" />
+    <link rel="stylesheet" href="home.css" />
 
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
 </head>
 <body>
-  <div class="app">
-    <header class="top-bar">
-      <div>
-        <h1>NYC Heat Helper</h1>
-        <p class="subtitle">Find nearby cooling centers and essentials</p>
-      </div>
-      <div class="temp-box">
-        <span id="tempValue">95°F</span>
-      </div>
-    </header>
+    <div class="app">
+        <header class="top-bar">
+            <div>
+                <h1>NYC Heat Helper</h1>
+                <p class="subtitle">Find nearby cooling centers and essentials</p>
+            </div>
 
-    <section id="weatherAlert" class="alert hidden"></section>
+            <p class="temp-label">Current Temp:</p>
+            <div class="temp-box">
+                <span id="tempValue">95°F</span>
+            </div>
+            
+        </header>
 
-    <section class="controls">
-      <button class="feature-btn active" data-type="cooling">Cooling Centers</button>
-      <button class="feature-btn" data-type="water">Water Fountains</button>
-      <button class="feature-btn" data-type="bathroom">Public Bathrooms</button>
-      <button class="feature-btn" data-type="charging">Charging Stations</button>
-    </section>
+        <section id="weatherAlert" class="alert hidden"></section>
 
-    <section class="map-card">
-      <div id="map"></div>
-      <div id="loadingOverlay" class="loading-overlay hidden">
-        <div class="spinner"></div>
-        <p>Locating nearest place...</p>
-      </div>
-    </section>
+        <section class="controls">
+        <button class="feature-btn active" data-type="cooling">Cooling Centers</button>
+        <button class="feature-btn" data-type="water">Water Fountains</button>
+        <button class="feature-btn" data-type="bathroom">Public Bathrooms</button>
+        <button class="feature-btn" data-type="charging">Charging Stations</button>
+        </section>
 
-    <section class="results-card">
-      <div class="results-header">
-        <h2 id="resultsTitle">Nearest Cooling Centers</h2>
-        <p id="userLocationLabel">User location: Times Square, Manhattan</p>
-      </div>
+        <section class="map-card">
+        <div id="map"></div>
+        <div id="loadingOverlay" class="loading-overlay hidden">
+            <div class="spinner"></div>
+            <p>Locating nearest place...</p>
+        </div>
+        </section>
 
-      <div id="nearestCard" class="nearest-card"></div>
+        <section class="results-card">
+        <div class="results-header">
+            <h2 id="resultsTitle">Nearest Cooling Centers</h2>
+            <p id="userLocationLabel">User location: Times Square, Manhattan</p>
+        </div>
 
-      <h3>Nearby Results</h3>
-      <div id="resultsList" class="results-list"></div>
-    </section>
-  </div>
+        <div id="nearestCard" class="nearest-card"></div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="home.js"></script>
+        <h3>Nearby Results</h3>
+        <div id="resultsList" class="results-list"></div>
+        </section>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="home.js"></script>
 </body>
 </html>

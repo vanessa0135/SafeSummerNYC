@@ -1,20 +1,21 @@
-const HOT_THRESHOLD = 85;
+const HOT_THRESHOLD = 85; //hard coding the heat 
 const HARD_CODED_TEMP = 95;
 
-const USER_LOCATION = {
-  name: "Times Square, Manhattan",
-  lat: 40.7580,
-  lng: -73.9855
+const USER_LOCATION = { //Hard coding user's location
+    name: "Times Square, Manhattan",
+    lat: 40.7580,
+    lng: -73.9855
 };
 
 const SEARCH_RADIUS_MILES = 2;
 
-const DATA_FILES = {
-  cooling: "data/cooling-centers.json",
-  water: "data/water-fountains.json",
-  bathroom: "data/bathrooms.json",
-  charging: "data/charging-stations.json"
+const DATA_FILES = { //hard coding the json files
+    cooling: "data/cooling-centers.json",
+    water: "data/water-fountains.json",
+    bathroom: "data/bathrooms.json",
+    charging: "data/charging-stations.json"
 };
+
 
 let currentType = "cooling";
 let map;
@@ -22,8 +23,9 @@ let userMarker;
 let featureMarkers = [];
 let radiusCircle;
 
-const tempValue = document.getElementById("tempValue");
-const weatherAlert = document.getElementById("weatherAlert");
+const tempValue = document.getElementById("tempValue"); //for displaying temp
+const tempBox = document.querySelector(".temp-box"); // for changing background color of temp
+const weatherAlert = document.getElementById("weatherAlert"); //displaying weather message
 const resultsTitle = document.getElementById("resultsTitle");
 const userLocationLabel = document.getElementById("userLocationLabel");
 const nearestCard = document.getElementById("nearestCard");
@@ -32,26 +34,55 @@ const loadingOverlay = document.getElementById("loadingOverlay");
 const buttons = document.querySelectorAll(".feature-btn");
 
 document.addEventListener("DOMContentLoaded", () => {
-  tempValue.textContent = `${HARD_CODED_TEMP}°F`;
-  userLocationLabel.textContent = `User location: ${USER_LOCATION.name}`;
+    tempValue.textContent = `${HARD_CODED_TEMP}°F`;
+    userLocationLabel.textContent = `User location: ${USER_LOCATION.name}`;
 
-  showWeatherAlert();
-  initMap();
-  attachButtonEvents();
-  loadAndDisplayPlaces(currentType);
+    showWeatherAlert();
+    updateTempBoxColor(HARD_CODED_TEMP); 
+    initMap();
+    attachButtonEvents();
+    loadAndDisplayPlaces(currentType);
+
 });
 
-function showWeatherAlert() {
-  if (HARD_CODED_TEMP >= HOT_THRESHOLD) {
+
+function showWeatherAlert() { 
+
+    if (HARD_CODED_TEMP >= HOT_THRESHOLD) {
+
     weatherAlert.classList.remove("hidden");
     weatherAlert.innerHTML = `
-      <strong>Heat Alert:</strong> It is ${HARD_CODED_TEMP}°F today.
-      Stay cool indoors when possible. Use this app to find the nearest cooling center or other essential stops.
+        <strong>Heat Alert:</strong> It is ${HARD_CODED_TEMP}°F today.
+        Stay cool indoors when possible. Use this app to find the nearest cooling center or other essential stops.
     `;
-  } else {
+    } else {
     weatherAlert.classList.add("hidden");
-  }
+    }
 }
+
+function updateTempBoxColor(temp) {
+    tempBox.classList.remove("temp-hot", "temp-warm", "temp-mild", "temp-cool");
+    //update temp box color
+
+    if (temp >= 100) {
+        tempBox.style.backgroundColor = "red";
+      //change color to red temp-box
+    } 
+    else if (temp < 90 && temp >= HOT_THRESHOLD) 
+    {
+        tempBox.style.backgroundColor = "orange";
+      //change color to orange
+    }
+    else if (temp < HOT_THRESHOLD && temp >= 70) {
+        tempBox.style.backgroundColor = "#98F051";
+      //change color to greenish yellow
+    }
+    else {
+        tempBox.style.backgroundColor = "skyblue";
+      //default color blue or hidden
+    }
+}
+
 
 function attachButtonEvents() {
   buttons.forEach(button => {
